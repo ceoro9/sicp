@@ -53,13 +53,61 @@ int find_number(int n) {
 	return find_number(first_number) + find_number(second_number);	
 }
 
-void print_pascal_triangle(int n) {
-	if (n == 1) {
-		cout << 1 << " ";
+bool is_right_border(int n) {
+	int row_number = find_row_number(n);
+
+	return find_distance(n) == row_number - 1;
+}
+
+bool is_left_border(int n) {
+	return find_distance(n) == 0;
+}
+
+void print_spaces_iter(int current_count, int total_count) {
+	if (current_count > total_count) {
 		return;
 	}
-	print_pascal_triangle(n - 1);
-	cout << find_number(n) << " ";
+	cout << " ";
+	print_spaces_iter(current_count + 1, total_count);
+}
+
+void print_spaces(int count) {
+	print_spaces_iter(0, count);
+}
+
+void print_number(int n, int total_rows_number) {
+	int row_number = find_row_number(n);
+	int value = find_number(n);
+
+	if (n == 1) {
+		print_spaces(total_rows_number - row_number);
+		cout << find_number(n);
+		print_spaces(total_rows_number - row_number);
+		cout << "\n";
+	} else if (is_left_border(n)) {
+		print_spaces(total_rows_number - row_number);
+		cout << value << " ";
+	} else if (is_right_border(n)) {
+		cout << value;
+		print_spaces(total_rows_number - row_number);
+		cout << "\n";
+	} else {
+		cout << value << " ";
+	}
+}
+
+void print_pascal_triangle(int n, int total_rows_number) {
+	if (n == 1) {
+		print_number(1, total_rows_number);
+		return;
+	}
+	print_pascal_triangle(n - 1, total_rows_number);
+	print_number(n, total_rows_number);
+}
+
+void handle_pascal_triangle(int n) {
+	int total_rows_number = find_row_number(n);
+	print_pascal_triangle(n, total_rows_number);
 }
 
 int main()
@@ -67,7 +115,10 @@ int main()
 	int n;
 
 	cout << "n = "; cin >> n;
-	print_pascal_triangle(n);
+	
+	cout << "\n\n";
+	handle_pascal_triangle(n);
+	cout << "\n\n";
 
 	return 0;
 }
