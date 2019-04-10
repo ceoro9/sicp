@@ -1,16 +1,15 @@
 (define (rec-func n)
   (cond ((< n 3) n) 
-        (else  (+ (func (- n 1)) 
-                  (+  (func (- n 2)) 
-                      (func (- n 3)))))))
+        (else  (+ (rec-func (- n 1)) 
+                  (+  (* 2 (rec-func (- n 2))) 
+                      (* 3 (rec-func (- n 3))))))))
+
 
 (define (iter-func n)
-  (cond ((< n 3) n)
-        (else (iter-iter-func 1 0 n))))
+  (define (inner-iter-func p1 p2 p3 count)
+    (if (= count 0) p1 (inner-iter-func p2 p3 (+ p3 (+ (* 2 p2) (* 3 p1))) (- count 1))))
+  (inner-iter-func 0 1 2 n))
 
-(define (iter-iter-func i sum n)
-  (cond ((> i n) sum) 
-        (else (   ))) ;; TODO
-)
-
-(display (iter-func 5))
+(display (iter-func 11))
+(display "\n")
+(display (rec-func 11))
