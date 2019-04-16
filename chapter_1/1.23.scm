@@ -1,3 +1,5 @@
+;; different next divisor implementation
+
 (define infelicity 0.01)
 
 (define (square x) (* x x))
@@ -20,7 +22,7 @@
 (define (handle-prime n i)
     (cond ((> i (sqrt n) 1))
           (else (cond ((= (remainder n i) 0) #f)
-                      (else (handle-prime n (+ i 1)))))))
+                      (else (handle-prime n (next-divisor i)))))))
 
 (define (prime? n)
     (handle-prime n 2)) 
@@ -43,15 +45,18 @@
     (newline)
     #t)
 
-; TODO: counter
+(define (next-divisor x)
+    (cond ((= x 2) 3)
+        (else (+ x 2)))) 
+
 (define (handle-search-for-primes n i counter)
     (cond ((= i (+ n 1)) 0)
           (else (begin
                     (timed-prime-test i)
-                    (handle-search-for-primes n (+ i 1) (+ counter 1)
+                    (handle-search-for-primes n (next-divisor i) (+ counter 1)
                 )))))
 
 (define (search-for-primes n)
     (handle-search-for-primes n 2 0))
 
-(display (search-for-primes 10))
+(display (search-for-primes 30))
