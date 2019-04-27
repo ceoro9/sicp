@@ -25,3 +25,5 @@
 (display (golden-ration)) ; average dump
 (newline)
 (display (fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.9))
+(newline)
+(display (fixed-point cos 1.0))
