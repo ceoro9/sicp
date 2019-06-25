@@ -43,7 +43,7 @@
 (define (deriv exp var)
     (cond ((number? exp) 0)
           ((variable? exp) (if (same-variable? exp var) 1 0))
-          (else ((get 'deriv (operator exp)) (operands exp) var))))
+          (else ((get (operator exp) 'deriv) (operands exp) var))))
 
 ; ------------------------------------------------------------------
 
@@ -52,6 +52,10 @@
           ((=number? a2 0) a1)
           ((and (number? a1) (number? a2)) (+ a1 a2))
            (else (list '+ a1 a2))))
+
+(define (sum? x) (and (pair? x) (eq? (car x) '+)))
+(define (addend s) (cadr s))
+(define (augend s) (caddr s))
 
 ; ------------------------------------------------------------------
 
@@ -62,6 +66,22 @@
           ((and (number? m1) (number? m2)) (* m1 m2))
            (else (list '* m1 m2))))
 
+(define (product? x) (and (pair? x) (eq? (car x) '*)))
+(define (multiplier p) (cadr p))
+(define (multiplicand p) (caddr p))
+
+; ------------------------------------------------------------------
+
+(define (make-exponentation a n)
+    (cond ((= n 1) a)
+          ((= n 0) 1)
+          ((and (number? a) (number? n)) (pow a n))
+          (else (list '^ a n))))
+
+(define (exponentation? x) (and (pair? x) (eq? (car x) '^)))
+(define (base s) (cadr s))
+(define (exponent s) (caddr s))
+
 ; ------------------------------------------------------------------
 
 (define (install-sum-deriv)
@@ -70,7 +90,7 @@
         (make-sum (deriv (car operands) var)
                   (deriv (cadr operands) var)))
     
-    (put 'deriv '+ handle-exp))
+    (put '+ 'deriv handle-exp))
 
 (define (install-product-deriv)
     
@@ -80,7 +100,19 @@
                   (make-product (cadr operands)
                                 (deriv (car operands) var))))
 
-    (put 'deriv '* handle-exp))
+    (put '* 'deriv handle-exp))
+
+(define (install-exponentation)
+    
+    (define (handle-exp operands var)
+        (make-product 
+            (make-product (cadr operands)
+                          (make-exponentation (car operands)
+                                              (make-sum (cadr operands)
+                                                        -1)))
+            (deriv (car operands) var)))
+                      
+    (put '^ 'deriv handle-exp))
 
 ; ------------------------------------------------------------------
 
@@ -89,9 +121,9 @@
 
 (install-sum-deriv)
 (install-product-deriv)
+(install-exponentation)
 
-
-(display (deriv '(+ (* 5 (+ 3 x)) (* 4 x)) 'x))
+(display (deriv '(+ (* 5 (+ 3 x)) (^ x 3)) 'x))
 
 
 
