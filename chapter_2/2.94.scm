@@ -3,7 +3,7 @@
     (define (gcd-poly P1 P2)
        (make (variable P1)
              (gcd-terms (term-list P1)
-                        (term-list P2)))
+                        (term-list P2))))
 
     (define (greatest-common-divisisor P1 P2)
         (if (same-variable? P1 P2)
