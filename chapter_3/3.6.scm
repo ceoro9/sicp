@@ -1,0 +1,40 @@
+(define (rand-update x)
+    (define random-values (list 4 7 6 8 9 5 1 2 3))
+    (define (find-next-value c-values)
+        (cond ((null? c-values)
+               (error "Randomizer does not support such number"))
+              ((and (= (car c-values) x)
+                    (null? (cdr c-values)))
+               (car random-values))
+              ((= (car c-values) x) (cadr c-values))
+              (else (find-next-value (cdr c-values)))))
+    (find-next-value random-values))
+
+(define rand (let ((rand-value 4))
+               (lambda (op)
+                 (cond ((eq? op 'generate)
+                        (begin
+                            (set! rand-value (rand-update rand-value))
+                            rand-value))
+                       ((eq? op 'reset)
+                        (lambda (new-value)
+                          (set! rand-value new-value)))))))
+
+(display (rand 'generate))
+(newline)
+(display (rand 'generate))
+(newline)
+(display (rand 'generate))
+
+((rand 'reset) 5)
+
+(newline)
+(newline)
+(newline)
+
+(display (rand 'generate))
+(newline)
+(display (rand 'generate))
+(newline)
+(display (rand 'generate))
+
